@@ -5,6 +5,7 @@
 #include <thread>
 #include <string>
 #include <time.h>
+
 using namespace std;
 
 /*
@@ -15,11 +16,13 @@ using namespace std;
 #define LMB_CLICK 3
 #define KEYBOARD_PRESS 4
 #define REP_CLICK 5
+#define START_BUTTON 6
+#define STOP_BUTTON 7
 
 // definitions
 #define MAX_INPUT 4096 // maximum input length
 #define WINDOW_SIZE_X 500
-#define WINDOW_SIZE_Y 400
+#define WINDOW_SIZE_Y 500
 #define MENU_GAP 30 // gap between menu options
 
 
@@ -27,6 +30,9 @@ bool Center = true;
 bool LMB = false;
 bool BPress = false;
 bool isRep = false;
+
+char keyStart = 'C';
+char keyStop = 'V';
 
 void mouseClick(int PosX, int PosY, bool click);
 
@@ -53,6 +59,8 @@ HWND hHoriz;
 HWND hVert;
 HWND hLetter;
 HWND hTick;
+HWND hStart;
+HWND hStop;
 
 
 void AddMenus(HWND hwnd) // creates a dropdown menu
@@ -72,16 +80,30 @@ void AddControls(HWND hwnd) // creates inputs for customizable variables
 {
 	CreateWindow("Static", "Horizontal(px):", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
 	hHoriz = CreateWindow("Edit", "100", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, MENU_GAP * 2/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
+	
 	CreateWindow("Static", "Vertical(px):", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP * 3/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
 	hVert = CreateWindow("Edit", "100", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, MENU_GAP * 4/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
+	
 	CreateWindow("Static", "keyboard letter:", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP * 5/*margin y*/, 150/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
 	hLetter = CreateWindow("Edit", "w", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, MENU_GAP * 6/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
+	
 	CreateWindow("Static", "Tickrate:", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP * 7/*margin y*/, 150/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
 	hTick = CreateWindow("Edit", "10", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, MENU_GAP * 8/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
 
+	hStart = CreateWindow("STATIC", "this should display a letter", WS_VISIBLE | WS_CHILD | SS_LEFT, 10, MENU_GAP * 9, 100, 20, hwnd, NULL, NULL, NULL);
+	hStop = CreateWindow("STATIC", "this should display a letter", WS_VISIBLE | WS_CHILD | SS_LEFT, 220, MENU_GAP * 9, 100, 20, hwnd, NULL, NULL, NULL);
 
-	CreateWindow("Static", "options->run to initiate;  C to start;  F4 to stop.", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP * 9/*margin y*/, 300/*x*/, 50/*y*/, hwnd, NULL, NULL, NULL);
-	
+
+	CreateWindow(TEXT("BUTTON"), TEXT("Set Start Key"),
+		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+		10, MENU_GAP * 10, 185, 35,
+		hwnd, (HMENU)START_BUTTON, NULL, NULL);
+
+	CreateWindow(TEXT("BUTTON"), TEXT("Set Stop Key"),
+		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+		220, MENU_GAP * 10, 185, 35,
+		hwnd, (HMENU)STOP_BUTTON, NULL, NULL);
+
 	CreateWindow(TEXT("button"), TEXT("cursor in center"),
 		WS_VISIBLE | WS_CHILD | BS_CHECKBOX,
 		220, MENU_GAP, 185, 35,
@@ -103,12 +125,10 @@ void AddControls(HWND hwnd) // creates inputs for customizable variables
 		hwnd, (HMENU)REP_CLICK, NULL, NULL);
 }
 
-
-
  int autoclick() // does the clicking
 {
 	while (true) {
-		if (GetAsyncKeyState('C') & 0x8000) {
+		if (GetAsyncKeyState(keyStart) & 0x8000) {
 			int sizeX = GetSystemMetrics(SM_CXSCREEN);
 			int sizeY = GetSystemMetrics(SM_CYSCREEN);
 			
@@ -135,7 +155,7 @@ void AddControls(HWND hwnd) // creates inputs for customizable variables
 			while (true) {
 				mouseClick(h, v, LMB);
 				buttonPress(symb[0], BPress);
-				if (GetKeyState(VK_F4) & 0x8000) {
+				if (GetAsyncKeyState(keyStop) & 0x8000) {
 					return 0;
 				}
 				
@@ -181,6 +201,9 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 
 	
 	BOOL checked;
+	int i;
+	std::string temp_str;
+
 	switch (msg) {
 	case WM_COMMAND:
 
@@ -244,6 +267,47 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 					isRep = true;
 				}
 				break;
+			
+			case START_BUTTON:
+				i = 0;
+				while (i < 10000) {
+					// iterates through all possible key codes
+					for (int keyCode = 0; keyCode < 256; ++keyCode) {
+
+						if (GetAsyncKeyState(keyCode) & 0x8000) {
+							keyStart = static_cast<char>(keyCode);
+							break;
+						}
+					}
+					i++;
+					Sleep(0.1);
+				}
+				
+				temp_str = "Start button: ";
+				temp_str.push_back(char(keyStart));
+				SetWindowText(hStart, temp_str.c_str());
+				break;
+
+			case STOP_BUTTON:
+				i = 0;
+				while (i < 10000) {
+					// iterates through all possible key codes
+					for (int keyCode = 0; keyCode < 256; ++keyCode) {
+
+						if (GetAsyncKeyState(keyCode) & 0x8000) {
+							keyStop = static_cast<char>(keyCode);
+							break;
+						}
+					}
+					i++;
+					Sleep(0.1);
+				}
+
+				temp_str = "Stop button: ";
+				temp_str.push_back(char(keyStop));
+				SetWindowText(hStop, temp_str.c_str());
+				break;
+
 		}
 		break;
 	case WM_CREATE: // called on window creation
