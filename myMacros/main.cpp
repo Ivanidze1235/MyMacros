@@ -16,8 +16,14 @@ using namespace std;
 #define KEYBOARD_PRESS 4
 #define REP_CLICK 5
 
+// definitions
+#define MAX_INPUT 4096 // maximum input length
+#define WINDOW_SIZE_X 500
+#define WINDOW_SIZE_Y 400
+#define MENU_GAP 30 // gap between menu options
 
-bool Center = false;
+
+bool Center = true;
 bool LMB = false;
 bool BPress = false;
 bool isRep = false;
@@ -64,36 +70,36 @@ void AddMenus(HWND hwnd) // creates a dropdown menu
 
 void AddControls(HWND hwnd) // creates inputs for customizable variables
 {
-	CreateWindow("Static", "Horizontal(px):", WS_VISIBLE | WS_CHILD, 10/*margin x*/, 10/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
-	hHoriz = CreateWindow("Edit", "100", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, 30/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
-	CreateWindow("Static", "Vertical(px):", WS_VISIBLE | WS_CHILD, 10/*margin x*/, 70/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
-	hVert = CreateWindow("Edit", "100", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, 90/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
-	CreateWindow("Static", "keyboard letter:", WS_VISIBLE | WS_CHILD, 10/*margin x*/, 120/*margin y*/, 150/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
-	hLetter = CreateWindow("Edit", "w", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, 150/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
-	CreateWindow("Static", "Tickrate:", WS_VISIBLE | WS_CHILD, 10/*margin x*/, 180/*margin y*/, 150/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
-	hTick = CreateWindow("Edit", "10", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, 210/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
+	CreateWindow("Static", "Horizontal(px):", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
+	hHoriz = CreateWindow("Edit", "100", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, MENU_GAP * 2/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
+	CreateWindow("Static", "Vertical(px):", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP * 3/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
+	hVert = CreateWindow("Edit", "100", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, MENU_GAP * 4/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
+	CreateWindow("Static", "keyboard letter:", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP * 5/*margin y*/, 150/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
+	hLetter = CreateWindow("Edit", "w", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, MENU_GAP * 6/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
+	CreateWindow("Static", "Tickrate:", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP * 7/*margin y*/, 150/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
+	hTick = CreateWindow("Edit", "10", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, MENU_GAP * 8/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
 
 
 	CreateWindow("Static", "options->run to initiate;  C to start;  F4 to stop;  F3 to leave the loop.", WS_VISIBLE | WS_CHILD, 10/*margin x*/, 240/*margin y*/, 300/*x*/, 50/*y*/, hwnd, NULL, NULL, NULL);
 	
 	CreateWindow(TEXT("button"), TEXT("cursor in center"),
 		WS_VISIBLE | WS_CHILD | BS_CHECKBOX,
-		220, 10, 185, 35,
+		220, MENU_GAP, 185, 35,
 		hwnd, (HMENU)CENTRE_CHECKBOX, NULL, NULL);
 
 	CreateWindow(TEXT("button"), TEXT("LMB click"),
 		WS_VISIBLE | WS_CHILD | BS_CHECKBOX,
-		220, 40, 185, 35,
+		220, MENU_GAP * 2, 185, 35,
 		hwnd, (HMENU)LMB_CLICK, NULL, NULL);
 
 	CreateWindow(TEXT("button"), TEXT("press button"),
 		WS_VISIBLE | WS_CHILD | BS_CHECKBOX,
-		220, 70, 185, 35,
+		220, MENU_GAP * 3, 185, 35,
 		hwnd, (HMENU)KEYBOARD_PRESS, NULL, NULL);
 
 	CreateWindow(TEXT("button"), TEXT("repeated clicks"),
 		WS_VISIBLE | WS_CHILD | BS_CHECKBOX,
-		220, 100, 185, 35,
+		220, MENU_GAP * 4, 185, 35,
 		hwnd, (HMENU)REP_CLICK, NULL, NULL);
 }
 
@@ -116,10 +122,10 @@ void AddControls(HWND hwnd) // creates inputs for customizable variables
 			}
 			else
 			{
-				char horisontal[10000];
-				GetWindowText(hHoriz, horisontal, 10000);
-				char vertical[10000];
-				GetWindowText(hVert, vertical, 10000);
+				char horisontal[MAX_INPUT];
+				GetWindowText(hHoriz, horisontal, MAX_INPUT);
+				char vertical[MAX_INPUT];
+				GetWindowText(hVert, vertical, MAX_INPUT);
 				h = atoi(horisontal);
 				v = atoi(vertical);
 			}
@@ -159,9 +165,10 @@ int WINAPI WinMain(HINSTANCE currentInstance, HINSTANCE previousInstance, PSTR c
 	CreateWindow(CLASS_NAME, "My Macros",
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE,			// Window style
 		CW_USEDEFAULT, CW_USEDEFAULT,				// Window initial position
-		500, 400,						// Window size
+		WINDOW_SIZE_X, WINDOW_SIZE_Y,						// Window size
 		nullptr, nullptr, nullptr, nullptr);
 	
+
 
 	// Window loop
 	MSG msg{};
@@ -174,7 +181,7 @@ int WINAPI WinMain(HINSTANCE currentInstance, HINSTANCE previousInstance, PSTR c
 	return 0;
 }
 
-LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM lparam) { // creates elements of the window
+LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM lparam) {
 
 	
 	BOOL checked;
@@ -246,6 +253,7 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 	case WM_CREATE:
 		AddMenus(hwnd);
 		AddControls(hwnd);
+		CheckDlgButton(hwnd, CENTRE_CHECKBOX, BST_CHECKED);
 		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
@@ -270,8 +278,8 @@ void mouseClick(int PosX, int PosY, bool click) // left-clicks every set amount 
 		ZeroMemory(&mouseInput, sizeof(mouseInput));
 
 		int tick;
-		char timer[100000];
-		GetWindowText(hTick, timer, 100000);
+		char timer[MAX_INPUT];
+		GetWindowText(hTick, timer, MAX_INPUT);
 		tick = atoi(timer);
 		Sleep(tick);
 	}
