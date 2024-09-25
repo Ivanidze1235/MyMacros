@@ -181,13 +181,13 @@ int WINAPI WinMain(HINSTANCE currentInstance, HINSTANCE previousInstance, PSTR c
 	return 0;
 }
 
-LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM lparam) {
+LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM lparam) { // processes windows messages
 
 	
 	BOOL checked;
 	switch (msg) {
 	case WM_COMMAND:
-		 
+
 		switch (param) {
 			case RUN_MENU:
 				MessageBeep(MB_OK);
@@ -250,12 +250,12 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 				break;
 		}
 		break;
-	case WM_CREATE:
+	case WM_CREATE: // called on window creation
 		AddMenus(hwnd);
 		AddControls(hwnd);
 		CheckDlgButton(hwnd, CENTRE_CHECKBOX, BST_CHECKED);
 		break;
-	case WM_DESTROY:
+	case WM_DESTROY: // called on window destruction
 		PostQuitMessage(0);
 		return 0;
 	default:
