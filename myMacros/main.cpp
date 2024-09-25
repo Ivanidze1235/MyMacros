@@ -80,7 +80,7 @@ void AddControls(HWND hwnd) // creates inputs for customizable variables
 	hTick = CreateWindow("Edit", "10", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, MENU_GAP * 8/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
 
 
-	CreateWindow("Static", "options->run to initiate;  C to start;  F4 to stop;  F3 to leave the loop.", WS_VISIBLE | WS_CHILD, 10/*margin x*/, 240/*margin y*/, 300/*x*/, 50/*y*/, hwnd, NULL, NULL, NULL);
+	CreateWindow("Static", "options->run to initiate;  C to start;  F4 to stop.", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP * 9/*margin y*/, 300/*x*/, 50/*y*/, hwnd, NULL, NULL, NULL);
 	
 	CreateWindow(TEXT("button"), TEXT("cursor in center"),
 		WS_VISIBLE | WS_CHILD | BS_CHECKBOX,
@@ -136,14 +136,10 @@ void AddControls(HWND hwnd) // creates inputs for customizable variables
 				mouseClick(h, v, LMB);
 				buttonPress(symb[0], BPress);
 				if (GetKeyState(VK_F4) & 0x8000) {
-					break;
+					return 0;
 				}
 				
 			}
-		}
-
-		if (GetKeyState(VK_F3) & 0x8000) {
-			break;
 		}
 	}
 	return 0;
