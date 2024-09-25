@@ -1,6 +1,4 @@
-﻿
-
-#include <windows.h>
+﻿#include <windows.h>
 #include <stdlib.h>
 
 #include <tchar.h>
@@ -9,6 +7,9 @@
 #include <time.h>
 using namespace std;
 
+/*
+* maps the buttons
+*/
 #define RUN_MENU 1
 #define CENTRE_CHECKBOX 2
 #define LMB_CLICK 3
@@ -23,7 +24,7 @@ bool isRep = false;
 
 void mouseClick(int PosX, int PosY, bool click);
 
-void buttonPress(char letter, bool press)
+void buttonPress(char letter, bool press) // presses a keyboard letter button when called
 {
 	if (press) {
 		INPUT kbInput = { 0 };
@@ -48,7 +49,7 @@ HWND hLetter;
 HWND hTick;
 
 
-void AddMenus(HWND hwnd)
+void AddMenus(HWND hwnd) // creates a dropdown menu
 {
 	hMenu = CreateMenu();
 	HMENU hFileMenu = CreateMenu();
@@ -61,7 +62,7 @@ void AddMenus(HWND hwnd)
 	SetMenu(hwnd, hMenu);
 }
 
-void AddControls(HWND hwnd)
+void AddControls(HWND hwnd) // creates inputs for customizable variables
 {
 	CreateWindow("Static", "Horizontal(px):", WS_VISIBLE | WS_CHILD, 10/*margin x*/, 10/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
 	hHoriz = CreateWindow("Edit", "100", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, 30/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
@@ -98,7 +99,7 @@ void AddControls(HWND hwnd)
 
 
 
- int autoclick()
+ int autoclick() // does the clicking
 {
 	while (true) {
 		if (GetAsyncKeyState('C') & 0x8000) {
@@ -143,7 +144,7 @@ void AddControls(HWND hwnd)
 	
 }
 
-int WINAPI WinMain(HINSTANCE currentInstance, HINSTANCE previousInstance, PSTR cmdLine, INT cmdCount) {
+int WINAPI WinMain(HINSTANCE currentInstance, HINSTANCE previousInstance, PSTR cmdLine, INT cmdCount) { // creates the window
 	// Register the window class
 	const char* CLASS_NAME = "myWin32WindowClass";
 	WNDCLASS wc{};
@@ -173,7 +174,7 @@ int WINAPI WinMain(HINSTANCE currentInstance, HINSTANCE previousInstance, PSTR c
 	return 0;
 }
 
-LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM lparam) {
+LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM lparam) { // creates elements of the window
 
 	
 	BOOL checked;
@@ -255,7 +256,7 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 	}
 }
 
-void mouseClick(int PosX, int PosY, bool click)
+void mouseClick(int PosX, int PosY, bool click) // left-clicks every set amount of time
 {
 
 	SetCursorPos(PosX, PosY);
