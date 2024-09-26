@@ -5,6 +5,7 @@
 #include <thread>
 #include <string>
 #include <time.h>
+#include <map>
 
 using namespace std;
 
@@ -204,6 +205,20 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 	int i;
 	std::string temp_str;
 
+	std::map<char, std::string> keys;
+	keys['p'] = "F1";  // Corresponds to key 112
+	keys['q'] = "F2";  // Corresponds to key 113
+	keys['r'] = "F3";  // Corresponds to key 114
+	keys['s'] = "F4";  // Corresponds to key 115
+	keys['t'] = "F5";  // Corresponds to key 116
+	keys['u'] = "F6";  // Corresponds to key 117
+	keys['v'] = "F7";  // Corresponds to key 118
+	keys['w'] = "F8";  // Corresponds to key 119
+	keys['x'] = "F9";  // Corresponds to key 120
+	keys['y'] = "F10"; // Corresponds to key 121
+	keys['z'] = "F11"; // Corresponds to key 122
+	keys['{'] = "F12"; // Corresponds to key 123
+
 	switch (msg) {
 	case WM_COMMAND:
 
@@ -284,7 +299,14 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 				}
 				
 				temp_str = "Start button: ";
-				temp_str.push_back(char(keyStart));
+				
+				if (keyStart < 112 || keyStart > 123) {
+					temp_str.push_back(keyStart);
+				}
+				else {
+					std::string key = keys.at(keyStart);
+					temp_str.append(key);
+				}
 				SetWindowText(hStart, temp_str.c_str());
 				break;
 
@@ -304,7 +326,13 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 				}
 
 				temp_str = "Stop button: ";
-				temp_str.push_back(char(keyStop));
+				if (keyStop < 112 || keyStop > 123) {
+					temp_str.push_back(keyStop);
+				}
+				else {
+					std::string key = keys.at(keyStop);
+					temp_str.append(key);
+				}
 				SetWindowText(hStop, temp_str.c_str());
 				break;
 
