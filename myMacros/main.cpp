@@ -6,6 +6,8 @@
 #include <string>
 #include <time.h>
 #include <map>
+#include "keys.h"
+
 
 using namespace std;
 
@@ -35,21 +37,18 @@ bool isRep = false;
 char keyStart = 'C';
 char keyStop = 'V';
 
-void mouseClick(int PosX, int PosY, bool click);
+void mouseClick(int PosX, int PosY);
 
-void buttonPress(char letter, bool press) // presses a keyboard letter button when called
+void buttonPress(char letter) // presses a keyboard letter button when called
 {
-	if (press) {
-		INPUT kbInput = { 0 };
-		kbInput.type = INPUT_KEYBOARD;
-		kbInput.ki.wVk = VkKeyScan(letter);
+	INPUT kbInput = { 0 };
+	kbInput.type = INPUT_KEYBOARD;
+	kbInput.ki.wVk = VkKeyScan(letter);
+	SendInput(1, &kbInput, sizeof(kbInput));
+	ZeroMemory(&kbInput, sizeof(kbInput));
+	if (isRep) {
+		kbInput.ki.wVk = VK_UP;
 		SendInput(1, &kbInput, sizeof(kbInput));
-		ZeroMemory(&kbInput, sizeof(kbInput));
-		if (isRep) {
-			kbInput.ki.wVk = VK_UP;
-			SendInput(1, &kbInput, sizeof(kbInput));
-		}
-		
 	}
 }
 
@@ -91,18 +90,18 @@ void AddControls(HWND hwnd) // creates inputs for customizable variables
 	CreateWindow("Static", "Tickrate:", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP * 7/*margin y*/, 150/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
 	hTick = CreateWindow("Edit", "10", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, MENU_GAP * 8/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
 
-	hStart = CreateWindow("STATIC", "this should display a letter", WS_VISIBLE | WS_CHILD | SS_LEFT, 10, MENU_GAP * 9, 100, 20, hwnd, NULL, NULL, NULL);
-	hStop = CreateWindow("STATIC", "this should display a letter", WS_VISIBLE | WS_CHILD | SS_LEFT, 220, MENU_GAP * 9, 100, 20, hwnd, NULL, NULL, NULL);
+	hStart = CreateWindow("STATIC", "C", WS_VISIBLE | WS_CHILD | SS_LEFT, 10, MENU_GAP * 9, 100, 40, hwnd, NULL, NULL, NULL);
+	hStop = CreateWindow("STATIC", "V", WS_VISIBLE | WS_CHILD | SS_LEFT, 220, MENU_GAP * 9, 100, 40, hwnd, NULL, NULL, NULL);
 
 
 	CreateWindow(TEXT("BUTTON"), TEXT("Set Start Key"),
 		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-		10, MENU_GAP * 10, 185, 35,
+		10, MENU_GAP * 11, 185, 35,
 		hwnd, (HMENU)START_BUTTON, NULL, NULL);
 
 	CreateWindow(TEXT("BUTTON"), TEXT("Set Stop Key"),
 		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-		220, MENU_GAP * 10, 185, 35,
+		220, MENU_GAP * 11, 185, 35,
 		hwnd, (HMENU)STOP_BUTTON, NULL, NULL);
 
 	CreateWindow(TEXT("button"), TEXT("cursor in center"),
@@ -129,13 +128,14 @@ void AddControls(HWND hwnd) // creates inputs for customizable variables
  int autoclick() // does the clicking
 {
 	while (true) {
-		if (GetAsyncKeyState(keyStart) & 0x8000) {
+		if (GetKeyState(keyStart) & 0x8000) {
+			
 			int sizeX = GetSystemMetrics(SM_CXSCREEN);
 			int sizeY = GetSystemMetrics(SM_CYSCREEN);
 			
 			int h;
 			int v;
-			
+
 			if (Center == true)
 			{
 				h = sizeX/2;
@@ -152,15 +152,16 @@ void AddControls(HWND hwnd) // creates inputs for customizable variables
 			}
 			char symb[2];
 			GetWindowText(hLetter, symb, 2);
-			
+
 			while (true) {
-				mouseClick(h, v, LMB);
-				buttonPress(symb[0], BPress);
-				if (GetAsyncKeyState(keyStop) & 0x8000) {
+				Sleep(0);
+				if (LMB) { mouseClick(h, v); }
+				if (BPress) { buttonPress(symb[0]); }
+				if (GetKeyState(keyStop) & 0x8000) {
 					return 0;
 				}
-				
 			}
+			
 		}
 	}
 	return 0;
@@ -200,24 +201,11 @@ int WINAPI WinMain(HINSTANCE currentInstance, HINSTANCE previousInstance, PSTR c
 
 LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM lparam) { // processes windows messages
 
-	
 	BOOL checked;
 	int i;
+	std::map<char, std::string> keys = create_keys();
 	std::string temp_str;
-
-	std::map<char, std::string> keys;
-	keys['p'] = "F1";  // Corresponds to key 112
-	keys['q'] = "F2";  // Corresponds to key 113
-	keys['r'] = "F3";  // Corresponds to key 114
-	keys['s'] = "F4";  // Corresponds to key 115
-	keys['t'] = "F5";  // Corresponds to key 116
-	keys['u'] = "F6";  // Corresponds to key 117
-	keys['v'] = "F7";  // Corresponds to key 118
-	keys['w'] = "F8";  // Corresponds to key 119
-	keys['x'] = "F9";  // Corresponds to key 120
-	keys['y'] = "F10"; // Corresponds to key 121
-	keys['z'] = "F11"; // Corresponds to key 122
-	keys['{'] = "F12"; // Corresponds to key 123
+	std::string key;
 
 	switch (msg) {
 	case WM_COMMAND:
@@ -285,7 +273,7 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 			
 			case START_BUTTON:
 				i = 0;
-				while (i < 10000) {
+				while (i < 100000) {
 					// iterates through all possible key codes
 					for (int keyCode = 0; keyCode < 256; ++keyCode) {
 
@@ -300,19 +288,20 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 				
 				temp_str = "Start button: ";
 				
-				if (keyStart < 112 || keyStart > 123) {
+				if (keyStart >= 65 && keyStart <= 90) {
 					temp_str.push_back(keyStart);
 				}
 				else {
 					std::string key = keys.at(keyStart);
 					temp_str.append(key);
 				}
+				
 				SetWindowText(hStart, temp_str.c_str());
 				break;
 
 			case STOP_BUTTON:
 				i = 0;
-				while (i < 10000) {
+				while (i < 100000) {
 					// iterates through all possible key codes
 					for (int keyCode = 0; keyCode < 256; ++keyCode) {
 
@@ -326,7 +315,7 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 				}
 
 				temp_str = "Stop button: ";
-				if (keyStop < 112 || keyStop > 123) {
+				if (keyStop >= 65 && keyStop <= 90) {
 					temp_str.push_back(keyStop);
 				}
 				else {
@@ -352,24 +341,20 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 	}
 }
 
-void mouseClick(int PosX, int PosY, bool click) // left-clicks every set amount of time
+void mouseClick(int PosX, int PosY) // left-clicks every set amount of time
 {
 
 	SetCursorPos(PosX, PosY);
-	if (click) {
-		INPUT mouseInput = { 0 };
-		mouseInput.type = INPUT_MOUSE;
-		mouseInput.mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
-		SendInput(1, &mouseInput, sizeof(mouseInput));
-		mouseInput.mi.dwFlags = MOUSEEVENTF_LEFTUP;
-		SendInput(1, &mouseInput, sizeof(mouseInput));
-		ZeroMemory(&mouseInput, sizeof(mouseInput));
-
-		int tick;
-		char timer[MAX_INPUT];
-		GetWindowText(hTick, timer, MAX_INPUT);
-		tick = atoi(timer);
-		Sleep(tick);
-	}
-
+	INPUT mouseInput = { 0 };
+	mouseInput.type = INPUT_MOUSE;
+	mouseInput.mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
+	SendInput(1, &mouseInput, sizeof(mouseInput));
+	mouseInput.mi.dwFlags = MOUSEEVENTF_LEFTUP;
+	SendInput(1, &mouseInput, sizeof(mouseInput));
+	ZeroMemory(&mouseInput, sizeof(mouseInput));
+	int tick;
+	char timer[MAX_INPUT];
+	GetWindowText(hTick, timer, MAX_INPUT);
+	tick = atoi(timer);
+	Sleep(tick);
 }
