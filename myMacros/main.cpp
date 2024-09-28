@@ -21,6 +21,7 @@ using namespace std;
 #define REP_CLICK 5
 #define START_BUTTON 6
 #define STOP_BUTTON 7
+#define RMB_CLICK 8
 
 // definitions
 #define MAX_INPUT 4096 // maximum input length
@@ -31,6 +32,7 @@ using namespace std;
 
 bool Center = true;
 bool LMB = false;
+bool RMB = false;
 bool BPress = false;
 bool isRep = false;
 
@@ -38,6 +40,7 @@ char keyStart = 'C';
 char keyStop = 'V';
 
 void mouseClick(int PosX, int PosY);
+void rightMouseClick(int PosX, int PosY);
 
 void buttonPress(char letter) // presses a keyboard letter button when called
 {
@@ -114,14 +117,19 @@ void AddControls(HWND hwnd) // creates inputs for customizable variables
 		220, MENU_GAP * 2, 185, 35,
 		hwnd, (HMENU)LMB_CLICK, NULL, NULL);
 
-	CreateWindow(TEXT("button"), TEXT("press button"),
+	CreateWindow(TEXT("button"), TEXT("RMB click"),
 		WS_VISIBLE | WS_CHILD | BS_CHECKBOX,
 		220, MENU_GAP * 3, 185, 35,
+		hwnd, (HMENU)RMB_CLICK, NULL, NULL);
+
+	CreateWindow(TEXT("button"), TEXT("press button"),
+		WS_VISIBLE | WS_CHILD | BS_CHECKBOX,
+		220, MENU_GAP * 4, 185, 35,
 		hwnd, (HMENU)KEYBOARD_PRESS, NULL, NULL);
 
 	CreateWindow(TEXT("button"), TEXT("repeated clicks"),
 		WS_VISIBLE | WS_CHILD | BS_CHECKBOX,
-		220, MENU_GAP * 4, 185, 35,
+		220, MENU_GAP * 5, 185, 35,
 		hwnd, (HMENU)REP_CLICK, NULL, NULL);
 }
 
@@ -156,6 +164,7 @@ void AddControls(HWND hwnd) // creates inputs for customizable variables
 			while (true) {
 				Sleep(0);
 				if (LMB) { mouseClick(h, v); }
+				if (RMB) { rightMouseClick(h, v); }
 				if (BPress) { buttonPress(symb[0]); }
 				if (GetKeyState(keyStop) & 0x8000) {
 					return 0;
@@ -242,6 +251,19 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 				else {
 					CheckDlgButton(hwnd, LMB_CLICK, BST_CHECKED);
 					LMB = true;
+				}
+				break;
+
+			case RMB_CLICK:
+				checked = IsDlgButtonChecked(hwnd, RMB_CLICK);
+
+				if (checked) {
+					CheckDlgButton(hwnd, RMB_CLICK, BST_UNCHECKED);
+					RMB = false;
+				}
+				else {
+					CheckDlgButton(hwnd, RMB_CLICK, BST_CHECKED);
+					RMB = true;
 				}
 				break;
 
@@ -350,6 +372,24 @@ void mouseClick(int PosX, int PosY) // left-clicks every set amount of time
 	mouseInput.mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
 	SendInput(1, &mouseInput, sizeof(mouseInput));
 	mouseInput.mi.dwFlags = MOUSEEVENTF_LEFTUP;
+	SendInput(1, &mouseInput, sizeof(mouseInput));
+	ZeroMemory(&mouseInput, sizeof(mouseInput));
+	int tick;
+	char timer[MAX_INPUT];
+	GetWindowText(hTick, timer, MAX_INPUT);
+	tick = atoi(timer);
+	Sleep(tick);
+}
+
+void rightMouseClick(int PosX, int PosY) // right-clicks every set amount of time
+{
+
+	SetCursorPos(PosX, PosY);
+	INPUT mouseInput = { 0 };
+	mouseInput.type = INPUT_MOUSE;
+	mouseInput.mi.dwFlags = MOUSEEVENTF_RIGHTDOWN;
+	SendInput(1, &mouseInput, sizeof(mouseInput));
+	mouseInput.mi.dwFlags = MOUSEEVENTF_RIGHTUP;
 	SendInput(1, &mouseInput, sizeof(mouseInput));
 	ZeroMemory(&mouseInput, sizeof(mouseInput));
 	int tick;
