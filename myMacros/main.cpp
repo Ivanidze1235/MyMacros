@@ -211,8 +211,8 @@ int WINAPI WinMain(HINSTANCE currentInstance, HINSTANCE previousInstance, PSTR c
 LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM lparam) { // processes windows messages
 
 	BOOL checked;
-	int i;
-	std::map<char, std::string> keys = create_keys();
+	BOOL key_found = false;
+	std::map<unsigned char, std::string> keys = create_keys();
 	std::string temp_str;
 	std::string key;
 
@@ -294,56 +294,61 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 				break;
 			
 			case START_BUTTON:
-				i = 0;
-				while (i < 100000) {
+				key_found = false;
+
+				while (!key_found) {
 					// iterates through all possible key codes
 					for (int keyCode = 0; keyCode < 256; ++keyCode) {
 
 						if (GetAsyncKeyState(keyCode) & 0x8000) {
-							keyStart = static_cast<char>(keyCode);
+							keyStart = static_cast<unsigned char>(keyCode);
+							key_found = true;
 							break;
 						}
 					}
-					i++;
 					Sleep(0.1);
 				}
-				
+
 				temp_str = "Start button: ";
 				
-				if (keyStart >= 65 && keyStart <= 90) {
-					temp_str.push_back(keyStart);
-				}
-				else {
-					std::string key = keys.at(keyStart);
+				if (keys.count(keyStart) > 0) {
+					key = keys.at(keyStart);
 					temp_str.append(key);
 				}
-				
+
+				else {
+					temp_str.append("Unknown");
+				}
+
 				SetWindowText(hStart, temp_str.c_str());
 				break;
 
 			case STOP_BUTTON:
-				i = 0;
-				while (i < 100000) {
+
+				while (!key_found) {
 					// iterates through all possible key codes
 					for (int keyCode = 0; keyCode < 256; ++keyCode) {
 
 						if (GetAsyncKeyState(keyCode) & 0x8000) {
-							keyStop = static_cast<char>(keyCode);
+							keyStop = static_cast<unsigned char>(keyCode);
+							key_found = true;
 							break;
 						}
 					}
-					i++;
 					Sleep(0.1);
 				}
 
 				temp_str = "Stop button: ";
-				if (keyStop >= 65 && keyStop <= 90) {
-					temp_str.push_back(keyStop);
-				}
-				else {
-					std::string key = keys.at(keyStop);
+
+				if (keys.count(keyStop) > 0) {
+					key = keys.at(keyStop);
 					temp_str.append(key);
 				}
+
+				else {
+					temp_str.append("Unknown");
+				}
+
 				SetWindowText(hStop, temp_str.c_str());
 				break;
 

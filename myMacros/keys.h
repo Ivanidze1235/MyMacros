@@ -2,15 +2,9 @@
 #include <map>
 #include <string>
 
-std::map<char, std::string> create_keys() {
-	std::map<char, std::string> keys;
+std::map<unsigned char, std::string> create_keys() {
+	std::map<unsigned char, std::string> keys;
 	
-	keys[-69] = "=";
-	keys[-65] = "/";
-	keys[-64] = "'";
-	keys[-36] = "\\";
-	keys[-34] = "#";
-	keys[-33] = "`";
 	keys[1] = "Mouse1";
 	keys[2] = "Mouse2";
 	keys[4] = "Mouse3";
@@ -45,6 +39,32 @@ std::map<char, std::string> create_keys() {
 	keys[55] = "7";
 	keys[56] = "8";
 	keys[57] = "9";
+	keys[65] = "A";
+	keys[66] = "B";
+	keys[67] = "C";
+	keys[68] = "D";
+	keys[69] = "E";
+	keys[70] = "F";
+	keys[71] = "G";
+	keys[72] = "H";
+	keys[73] = "I";
+	keys[74] = "J";
+	keys[75] = "K";
+	keys[76] = "L";
+	keys[77] = "M";
+	keys[78] = "N";
+	keys[79] = "O";
+	keys[80] = "P";
+	keys[81] = "Q";
+	keys[82] = "R";
+	keys[83] = "S";
+	keys[84] = "T";
+	keys[85] = "U";
+	keys[86] = "V";
+	keys[87] = "W";
+	keys[88] = "X";
+	keys[89] = "Y";
+	keys[90] = "Z";
 	keys[91] = "Win";
 	keys[96] = "0";
 	keys[97] = "1";
@@ -76,12 +96,17 @@ std::map<char, std::string> create_keys() {
 	keys[144] = "Num";
 	keys[145] = "Scr";
 	keys[186] = ";";
+	keys[187] = "=";
 	keys[188] = ",";
 	keys[189] = "-";
 	keys[190] = ".";
+	keys[191] = "/";
+	keys[192] = "'";
 	keys[219] = "[";
+	keys[220] = "\\";
 	keys[221] = "]";
-	keys[222] = "\'";
+	keys[222] = "#";
+	keys[223] = "`";
 
 	return keys;
 }
