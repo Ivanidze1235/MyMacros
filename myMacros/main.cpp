@@ -6,29 +6,8 @@
 #include <string>
 #include <time.h>
 #include <map>
-#include "keys.h"
 
-
-using namespace std;
-
-/*
-* maps the buttons
-*/
-#define RUN_MENU 1
-#define CENTRE_CHECKBOX 2
-#define LMB_CLICK 3
-#define KEYBOARD_PRESS 4
-#define REP_CLICK 5
-#define START_BUTTON 6
-#define STOP_BUTTON 7
-#define RMB_CLICK 8
-
-// definitions
-#define MAX_INPUT 4096 // maximum input length
-#define WINDOW_SIZE_X 500
-#define WINDOW_SIZE_Y 500
-#define MENU_GAP 30 // gap between menu options
-
+#include "definitions.h"
 
 bool Center = true;
 bool LMB = false;
@@ -38,9 +17,6 @@ bool isRep = false;
 
 char keyStart = 'C';
 char keyStop = 'V';
-
-void mouseClick(int PosX, int PosY);
-void rightMouseClick(int PosX, int PosY);
 
 void buttonPress(char letter) // presses a keyboard letter button when called
 {
@@ -66,72 +42,10 @@ HWND hStart;
 HWND hStop;
 
 
-void AddMenus(HWND hwnd) // creates a dropdown menu
-{
-	hMenu = CreateMenu();
-	HMENU hFileMenu = CreateMenu();
-	
+#include "keys.h"
+#include "clicks.h"
+#include "init.h"
 
-	AppendMenu(hFileMenu, MF_STRING, RUN_MENU, "run");
-
-	AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hFileMenu, "Options");
-
-	SetMenu(hwnd, hMenu);
-}
-
-void AddControls(HWND hwnd) // creates inputs for customizable variables
-{
-	CreateWindow("Static", "Horizontal(px):", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
-	hHoriz = CreateWindow("Edit", "100", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, MENU_GAP * 2/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
-	
-	CreateWindow("Static", "Vertical(px):", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP * 3/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
-	hVert = CreateWindow("Edit", "100", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, MENU_GAP * 4/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
-	
-	CreateWindow("Static", "keyboard letter:", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP * 5/*margin y*/, 150/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
-	hLetter = CreateWindow("Edit", "w", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, MENU_GAP * 6/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
-	
-	CreateWindow("Static", "Tickrate:", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP * 7/*margin y*/, 150/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
-	hTick = CreateWindow("Edit", "10", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, MENU_GAP * 8/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
-
-	hStart = CreateWindow("STATIC", "C", WS_VISIBLE | WS_CHILD | SS_LEFT, 10, MENU_GAP * 9, 100, 40, hwnd, NULL, NULL, NULL);
-	hStop = CreateWindow("STATIC", "V", WS_VISIBLE | WS_CHILD | SS_LEFT, 220, MENU_GAP * 9, 100, 40, hwnd, NULL, NULL, NULL);
-
-
-	CreateWindow(TEXT("BUTTON"), TEXT("Set Start Key"),
-		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-		10, MENU_GAP * 11, 185, 35,
-		hwnd, (HMENU)START_BUTTON, NULL, NULL);
-
-	CreateWindow(TEXT("BUTTON"), TEXT("Set Stop Key"),
-		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-		220, MENU_GAP * 11, 185, 35,
-		hwnd, (HMENU)STOP_BUTTON, NULL, NULL);
-
-	CreateWindow(TEXT("button"), TEXT("cursor in center"),
-		WS_VISIBLE | WS_CHILD | BS_CHECKBOX,
-		220, MENU_GAP, 185, 35,
-		hwnd, (HMENU)CENTRE_CHECKBOX, NULL, NULL);
-
-	CreateWindow(TEXT("button"), TEXT("LMB click"),
-		WS_VISIBLE | WS_CHILD | BS_CHECKBOX,
-		220, MENU_GAP * 2, 185, 35,
-		hwnd, (HMENU)LMB_CLICK, NULL, NULL);
-
-	CreateWindow(TEXT("button"), TEXT("RMB click"),
-		WS_VISIBLE | WS_CHILD | BS_CHECKBOX,
-		220, MENU_GAP * 3, 185, 35,
-		hwnd, (HMENU)RMB_CLICK, NULL, NULL);
-
-	CreateWindow(TEXT("button"), TEXT("press button"),
-		WS_VISIBLE | WS_CHILD | BS_CHECKBOX,
-		220, MENU_GAP * 4, 185, 35,
-		hwnd, (HMENU)KEYBOARD_PRESS, NULL, NULL);
-
-	CreateWindow(TEXT("button"), TEXT("repeated clicks"),
-		WS_VISIBLE | WS_CHILD | BS_CHECKBOX,
-		220, MENU_GAP * 5, 185, 35,
-		hwnd, (HMENU)REP_CLICK, NULL, NULL);
-}
 
  int autoclick() // does the clicking
 {
@@ -368,38 +282,4 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 	}
 }
 
-void mouseClick(int PosX, int PosY) // left-clicks every set amount of time
-{
 
-	SetCursorPos(PosX, PosY);
-	INPUT mouseInput = { 0 };
-	mouseInput.type = INPUT_MOUSE;
-	mouseInput.mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
-	SendInput(1, &mouseInput, sizeof(mouseInput));
-	mouseInput.mi.dwFlags = MOUSEEVENTF_LEFTUP;
-	SendInput(1, &mouseInput, sizeof(mouseInput));
-	ZeroMemory(&mouseInput, sizeof(mouseInput));
-	int tick;
-	char timer[MAX_INPUT];
-	GetWindowText(hTick, timer, MAX_INPUT);
-	tick = atoi(timer);
-	Sleep(tick);
-}
-
-void rightMouseClick(int PosX, int PosY) // right-clicks every set amount of time
-{
-
-	SetCursorPos(PosX, PosY);
-	INPUT mouseInput = { 0 };
-	mouseInput.type = INPUT_MOUSE;
-	mouseInput.mi.dwFlags = MOUSEEVENTF_RIGHTDOWN;
-	SendInput(1, &mouseInput, sizeof(mouseInput));
-	mouseInput.mi.dwFlags = MOUSEEVENTF_RIGHTUP;
-	SendInput(1, &mouseInput, sizeof(mouseInput));
-	ZeroMemory(&mouseInput, sizeof(mouseInput));
-	int tick;
-	char timer[MAX_INPUT];
-	GetWindowText(hTick, timer, MAX_INPUT);
-	tick = atoi(timer);
-	Sleep(tick);
-}

@@ -1,6 +1,4 @@
 #pragma once
-#include <map>
-#include <string>
 
 std::map<unsigned char, std::string> create_keys() {
 	std::map<unsigned char, std::string> keys;
