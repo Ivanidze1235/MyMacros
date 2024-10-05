@@ -17,3 +17,20 @@
 #define WINDOW_SIZE_X 500
 #define WINDOW_SIZE_Y 500
 #define MENU_GAP 30 // gap between menu options
+
+bool Center = true;
+bool LMB = false;
+bool RMB = false;
+bool BPress = false;
+bool isRep = false;
+
+char keyStart = 'C';
+char keyStop = 'V';
+
+HMENU hMenu;
+HWND hHoriz;
+HWND hVert;
+HWND hLetter;
+HWND hTick;
+HWND hStart;
+HWND hStop;

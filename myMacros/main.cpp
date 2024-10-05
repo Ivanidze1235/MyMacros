@@ -9,15 +9,6 @@
 
 #include "definitions.h"
 
-bool Center = true;
-bool LMB = false;
-bool RMB = false;
-bool BPress = false;
-bool isRep = false;
-
-char keyStart = 'C';
-char keyStop = 'V';
-
 void buttonPress(char* letter) // presses a keyboard letter button when called
 {
 	INPUT kbInput = { 0 };
@@ -32,15 +23,6 @@ void buttonPress(char* letter) // presses a keyboard letter button when called
 }
 
 LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM lparam);
-
-HMENU hMenu;
-HWND hHoriz;
-HWND hVert;
-HWND hLetter;
-HWND hTick;
-HWND hStart;
-HWND hStop;
-
 
 #include "keys.h"
 #include "clicks.h"
@@ -131,10 +113,10 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 	std::string key;
 
 	switch (msg) {
-	case WM_COMMAND:
+	case WM_COMMAND: // iterates through possible window messages
 
 		switch (param) {
-			case RUN_MENU:
+			case RUN_MENU: // triggers when the "run" button in the dropdown menu is pressed
 				MessageBeep(MB_OK);
 				{
 					std::thread first(autoclick);
@@ -142,7 +124,7 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 				}
 				break;
 
-			case CENTRE_CHECKBOX:
+			case CENTRE_CHECKBOX: // triggers if a checkbox responsible for cursor position is changed
 				checked = IsDlgButtonChecked(hwnd, CENTRE_CHECKBOX);
 
 				if (checked) {
@@ -155,7 +137,7 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 				}
 				break;
 
-			case LMB_CLICK:
+			case LMB_CLICK: // triggers if a checkbox responsible for left clicks is changed
 				checked = IsDlgButtonChecked(hwnd, LMB_CLICK);
 
 				if (checked) {
@@ -168,7 +150,7 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 				}
 				break;
 
-			case RMB_CLICK:
+			case RMB_CLICK:// triggers if a checkbox responsible for right clicks is changed
 				checked = IsDlgButtonChecked(hwnd, RMB_CLICK);
 
 				if (checked) {
@@ -181,7 +163,7 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 				}
 				break;
 
-			case KEYBOARD_PRESS:
+			case KEYBOARD_PRESS:// triggers if a checkbox responsible for keyboard button press is changed (needs an update to a newer system)
 				checked = IsDlgButtonChecked(hwnd, KEYBOARD_PRESS);
 
 				if (checked) {
@@ -194,7 +176,7 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 				}
 				break;
 
-			case REP_CLICK:
+			case REP_CLICK: // triggers if a checkbox responsible for repeated clicks is changed
 				checked = IsDlgButtonChecked(hwnd, REP_CLICK);
 
 				if (checked) {
@@ -207,7 +189,7 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 				}
 				break;
 			
-			case START_BUTTON:
+			case START_BUTTON: // triggers upon clicking the "start button" button. Sets the keybind for starting the loop
 				key_found = false;
 
 				while (!key_found) {
@@ -230,14 +212,14 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 					temp_str.append(key);
 				}
 
-				else {
+				else { // in case unnormal key is pressed
 					temp_str.append("Unknown");
 				}
 
 				SetWindowText(hStart, temp_str.c_str());
 				break;
 
-			case STOP_BUTTON:
+			case STOP_BUTTON: // triggers upon clicking the "stop button" button. Sets the keybind for stopping the loop
 
 				while (!key_found) {
 					// iterates through all possible key codes

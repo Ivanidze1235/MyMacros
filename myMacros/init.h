@@ -27,8 +27,8 @@ void AddControls(HWND hwnd) // creates inputs for customizable variables
 	CreateWindow("Static", "Tickrate:", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP * 7/*margin y*/, 150/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
 	hTick = CreateWindow("Edit", "10", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, MENU_GAP * 8/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
 
-	hStart = CreateWindow("STATIC", "C", WS_VISIBLE | WS_CHILD | SS_LEFT, 10, MENU_GAP * 9, 100, 40, hwnd, NULL, NULL, NULL);
-	hStop = CreateWindow("STATIC", "V", WS_VISIBLE | WS_CHILD | SS_LEFT, 220, MENU_GAP * 9, 100, 40, hwnd, NULL, NULL, NULL);
+	hStart = CreateWindow("STATIC", "Start button: C", WS_VISIBLE | WS_CHILD | SS_LEFT, 10, MENU_GAP * 9, 100, 40, hwnd, NULL, NULL, NULL);
+	hStop = CreateWindow("STATIC", "Stop button: V", WS_VISIBLE | WS_CHILD | SS_LEFT, 220, MENU_GAP * 9, 100, 40, hwnd, NULL, NULL, NULL);
 
 
 	CreateWindow(TEXT("BUTTON"), TEXT("Set Start Key"),
