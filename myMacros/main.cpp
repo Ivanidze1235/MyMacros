@@ -18,11 +18,11 @@ bool isRep = false;
 char keyStart = 'C';
 char keyStop = 'V';
 
-void buttonPress(char letter) // presses a keyboard letter button when called
+void buttonPress(char* letter) // presses a keyboard letter button when called
 {
 	INPUT kbInput = { 0 };
 	kbInput.type = INPUT_KEYBOARD;
-	kbInput.ki.wVk = VkKeyScan(letter);
+	kbInput.ki.wVk = VkKeyScan(*letter);
 	SendInput(1, &kbInput, sizeof(kbInput));
 	ZeroMemory(&kbInput, sizeof(kbInput));
 	if (isRep) {
@@ -76,10 +76,10 @@ HWND hStop;
 			GetWindowText(hLetter, symb, 2);
 
 			while (true) {
-				Sleep(0);
-				if (LMB) { mouseClick(h, v); }
-				if (RMB) { rightMouseClick(h, v); }
-				if (BPress) { buttonPress(symb[0]); }
+				Sleep(0.01);
+				if (LMB) { mouseClick(&h, &v); }
+				if (RMB) { rightMouseClick(&h, &v); }
+				if (BPress) { buttonPress(&symb[0]); }
 				if (GetKeyState(keyStop) & 0x8000) {
 					return 0;
 				}

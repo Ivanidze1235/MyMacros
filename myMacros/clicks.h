@@ -1,9 +1,9 @@
 #pragma once
 
-void mouseClick(int PosX, int PosY) // left-clicks every set amount of time
+void mouseClick(int* PosX, int* PosY) // left-clicks every set amount of time
 {
 
-	SetCursorPos(PosX, PosY);
+	SetCursorPos(*PosX, *PosY);
 	INPUT mouseInput = { 0 };
 	mouseInput.type = INPUT_MOUSE;
 	mouseInput.mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
@@ -18,10 +18,10 @@ void mouseClick(int PosX, int PosY) // left-clicks every set amount of time
 	Sleep(tick);
 }
 
-void rightMouseClick(int PosX, int PosY) // right-clicks every set amount of time
+void rightMouseClick(int* PosX, int* PosY) // right-clicks every set amount of time
 {
 
-	SetCursorPos(PosX, PosY);
+	SetCursorPos(*PosX, *PosY);
 	INPUT mouseInput = { 0 };
 	mouseInput.type = INPUT_MOUSE;
 	mouseInput.mi.dwFlags = MOUSEEVENTF_RIGHTDOWN;
