@@ -1,6 +1,8 @@
 ﻿#include <windows.h>
 #include <stdlib.h>
 
+#include <stdexcept>
+
 #include <tchar.h>
 #include <thread>
 #include <string>
@@ -32,9 +34,9 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
  int autoclick() // does the clicking
 {
 	while (true) {
-		if (GetKeyState(keyStart) & 0x8000) {
+		if (GetKeyState(keyStart) & 0x8000) { // waits for the start key to be pressed
 			
-			int sizeX = GetSystemMetrics(SM_CXSCREEN);
+			int sizeX = GetSystemMetrics(SM_CXSCREEN); // gets the screen dimentions
 			int sizeY = GetSystemMetrics(SM_CYSCREEN);
 			
 			int h;
@@ -57,12 +59,12 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 			char symb[2];
 			GetWindowText(hLetter, symb, 2);
 
-			while (true) {
+			while (true) { // calls the optional functions
 				Sleep(0.01);
 				if (LMB) { mouseClick(&h, &v); }
 				if (RMB) { rightMouseClick(&h, &v); }
 				if (BPress) { buttonPress(&symb[0]); }
-				if (GetKeyState(keyStop) & 0x8000) {
+				if (GetKeyState(keyStop) & 0x8000) { // breaks the loop when stop keyb is pressed
 					return 0;
 				}
 			}
@@ -206,13 +208,11 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 				}
 
 				temp_str = "Start button: ";
-				
-				if (keys.count(keyStart) > 0) {
+				try {
 					key = keys.at(keyStart);
 					temp_str.append(key);
 				}
-
-				else { // in case unnormal key is pressed
+				catch(const std::out_of_range& e){ // catches trying to enter an invalid/broken character (sometimes triggers on ctrl/alt/shift for reasons unknown)
 					temp_str.append("Unknown");
 				}
 
@@ -236,12 +236,11 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 
 				temp_str = "Stop button: ";
 
-				if (keys.count(keyStop) > 0) {
+				try {
 					key = keys.at(keyStop);
 					temp_str.append(key);
 				}
-
-				else {
+				catch (const std::out_of_range& e) { // catches trying to enter an invalid/broken character (sometimes triggers on ctrl/alt/shift for reasons unknown)
 					temp_str.append("Unknown");
 				}
 
