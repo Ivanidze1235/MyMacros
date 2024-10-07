@@ -21,24 +21,33 @@ void AddControls(HWND hwnd) // creates inputs for customizable variables
 	CreateWindow("Static", "Vertical(px):", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP * 3/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
 	hVert = CreateWindow("Edit", "100", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, MENU_GAP * 4/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
 
-	CreateWindow("Static", "keyboard letter:", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP * 5/*margin y*/, 150/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
-	hLetter = CreateWindow("Edit", "w", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, MENU_GAP * 6/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
+	// DEFUNCT SOLUTION
+	//CreateWindow("Static", "keyboard letter:", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP * 5/*margin y*/, 150/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
+	//hLetter = CreateWindow("Edit", "w", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, MENU_GAP * 6/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
 
-	CreateWindow("Static", "Tickrate:", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP * 7/*margin y*/, 150/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
-	hTick = CreateWindow("Edit", "10", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, MENU_GAP * 8/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
+	CreateWindow(TEXT("BUTTON"), TEXT("Set button"),
+		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+		10, MENU_GAP * 5, 185, 35,
+		hwnd, (HMENU)PRESS_BUTTON, NULL, NULL);
 
-	hStart = CreateWindow("STATIC", "Start button: C", WS_VISIBLE | WS_CHILD | SS_LEFT, 10, MENU_GAP * 9, 100, 40, hwnd, NULL, NULL, NULL);
-	hStop = CreateWindow("STATIC", "Stop button: V", WS_VISIBLE | WS_CHILD | SS_LEFT, 220, MENU_GAP * 9, 100, 40, hwnd, NULL, NULL, NULL);
+	hLetter = CreateWindow("STATIC", "Button: W", WS_VISIBLE | WS_CHILD | SS_LEFT, 10, MENU_GAP * 7, 180, 20, hwnd, NULL, NULL, NULL);
+
+
+	CreateWindow("Static", "Tickrate:", WS_VISIBLE | WS_CHILD, 10/*margin x*/, MENU_GAP * 8/*margin y*/, 150/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
+	hTick = CreateWindow("Edit", "10", WS_VISIBLE | WS_CHILD | WS_BORDER, 10/*margin x*/, MENU_GAP * 9/*margin y*/, 100/*x*/, 20/*y*/, hwnd, NULL, NULL, NULL);
+
+	hStart = CreateWindow("STATIC", "Start button: C", WS_VISIBLE | WS_CHILD | SS_LEFT, 10, MENU_GAP * 10, 100, 40, hwnd, NULL, NULL, NULL);
+	hStop = CreateWindow("STATIC", "Stop button: V", WS_VISIBLE | WS_CHILD | SS_LEFT, 220, MENU_GAP * 10, 100, 40, hwnd, NULL, NULL, NULL);
 
 
 	CreateWindow(TEXT("BUTTON"), TEXT("Set Start Key"),
 		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-		10, MENU_GAP * 11, 185, 35,
+		10, MENU_GAP * 12, 185, 35,
 		hwnd, (HMENU)START_BUTTON, NULL, NULL);
 
 	CreateWindow(TEXT("BUTTON"), TEXT("Set Stop Key"),
 		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-		220, MENU_GAP * 11, 185, 35,
+		220, MENU_GAP * 12, 185, 35,
 		hwnd, (HMENU)STOP_BUTTON, NULL, NULL);
 
 	CreateWindow(TEXT("button"), TEXT("cursor in center"),

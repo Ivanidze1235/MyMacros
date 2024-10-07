@@ -56,14 +56,12 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 				h = atoi(horisontal);
 				v = atoi(vertical);
 			}
-			char symb[2];
-			GetWindowText(hLetter, symb, 2);
 
 			while (true) { // calls the optional functions
 				Sleep(0.01);
 				if (LMB) { mouseClick(&h, &v); }
 				if (RMB) { rightMouseClick(&h, &v); }
-				if (BPress) { buttonPress(&symb[0]); }
+				if (BPress) { buttonPress(&keyButton); }
 				if (GetKeyState(keyStop) & 0x8000) { // breaks the loop when stop keyb is pressed
 					return 0;
 				}
@@ -245,6 +243,34 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 				}
 
 				SetWindowText(hStop, temp_str.c_str());
+				break;
+
+			case PRESS_BUTTON: // triggers upon clicking the "Set button" button. Sets the keybind for stopping the loop
+
+				while (!key_found) {
+					// iterates through all possible key codes
+					for (int keyCode = 0; keyCode < 256; ++keyCode) {
+
+						if (GetAsyncKeyState(keyCode) & 0x8000) {
+							keyButton = static_cast<unsigned char>(keyCode);
+							key_found = true;
+							break;
+						}
+					}
+					Sleep(0.1);
+				}
+
+				temp_str = "Button: ";
+
+				try {
+					key = keys.at(keyButton);
+					temp_str.append(key);
+				}
+				catch (const std::out_of_range& e) { // catches trying to enter an invalid/broken character (sometimes triggers on ctrl/alt/shift for reasons unknown)
+					temp_str.append("Unknown");
+				}
+
+				SetWindowText(hLetter, temp_str.c_str());
 				break;
 
 		}

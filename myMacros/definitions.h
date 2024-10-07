@@ -11,6 +11,7 @@
 #define START_BUTTON 6
 #define STOP_BUTTON 7
 #define RMB_CLICK 8
+#define PRESS_BUTTON 9
 
 // definitions
 #define MAX_INPUT 4096 // maximum input length
@@ -26,6 +27,7 @@ bool isRep = false;
 
 char keyStart = 'C';
 char keyStop = 'V';
+char keyButton = 'W';
 
 HMENU hMenu;
 HWND hHoriz;
@@ -34,3 +36,4 @@ HWND hLetter;
 HWND hTick;
 HWND hStart;
 HWND hStop;
+
