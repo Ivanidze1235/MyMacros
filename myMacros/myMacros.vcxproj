@@ -134,6 +134,7 @@
     <ClInclude Include="clicks.h" />
     <ClInclude Include="definitions.h" />
     <ClInclude Include="init.h" />
+    <ClInclude Include="keycode.h" />
     <ClInclude Include="keys.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

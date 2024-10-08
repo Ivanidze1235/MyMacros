@@ -35,3 +35,16 @@ void rightMouseClick(int* PosX, int* PosY) // right-clicks every set amount of t
 	tick = atoi(timer);
 	Sleep(tick);
 }
+
+void buttonPress(char* letter) // presses a keyboard letter button when called
+{
+	INPUT kbInput = { 0 };
+	kbInput.type = INPUT_KEYBOARD;
+	kbInput.ki.wVk = VkKeyScan(*letter);
+	SendInput(1, &kbInput, sizeof(kbInput));
+	ZeroMemory(&kbInput, sizeof(kbInput));
+	if (isRep) {
+		kbInput.ki.wVk = VK_UP;
+		SendInput(1, &kbInput, sizeof(kbInput));
+	}
+}

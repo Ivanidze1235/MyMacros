@@ -11,25 +11,12 @@
 
 #include "definitions.h"
 
-void buttonPress(char* letter) // presses a keyboard letter button when called
-{
-	INPUT kbInput = { 0 };
-	kbInput.type = INPUT_KEYBOARD;
-	kbInput.ki.wVk = VkKeyScan(*letter);
-	SendInput(1, &kbInput, sizeof(kbInput));
-	ZeroMemory(&kbInput, sizeof(kbInput));
-	if (isRep) {
-		kbInput.ki.wVk = VK_UP;
-		SendInput(1, &kbInput, sizeof(kbInput));
-	}
-}
-
 LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM lparam);
 
 #include "keys.h"
 #include "clicks.h"
 #include "init.h"
-
+#include "keycode.h"
 
  int autoclick() // does the clicking
 {
@@ -107,7 +94,6 @@ int WINAPI WinMain(HINSTANCE currentInstance, HINSTANCE previousInstance, PSTR c
 LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM lparam) { // processes windows messages
 
 	BOOL checked;
-	BOOL key_found = false;
 	std::map<unsigned char, std::string> keys = create_keys();
 	std::string temp_str;
 	std::string key;
@@ -190,20 +176,8 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 				break;
 			
 			case START_BUTTON: // triggers upon clicking the "start button" button. Sets the keybind for starting the loop
-				key_found = false;
-
-				while (!key_found) {
-					// iterates through all possible key codes
-					for (int keyCode = 0; keyCode < 256; ++keyCode) {
-
-						if (GetAsyncKeyState(keyCode) & 0x8000) {
-							keyStart = static_cast<unsigned char>(keyCode);
-							key_found = true;
-							break;
-						}
-					}
-					Sleep(0.1);
-				}
+				
+				keyStart = Keycode();
 
 				temp_str = "Start button: ";
 				try {
@@ -219,18 +193,7 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 
 			case STOP_BUTTON: // triggers upon clicking the "stop button" button. Sets the keybind for stopping the loop
 
-				while (!key_found) {
-					// iterates through all possible key codes
-					for (int keyCode = 0; keyCode < 256; ++keyCode) {
-
-						if (GetAsyncKeyState(keyCode) & 0x8000) {
-							keyStop = static_cast<unsigned char>(keyCode);
-							key_found = true;
-							break;
-						}
-					}
-					Sleep(0.1);
-				}
+				keyStop = Keycode();
 
 				temp_str = "Stop button: ";
 
@@ -247,18 +210,7 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 
 			case PRESS_BUTTON: // triggers upon clicking the "Set button" button. Sets the keybind for stopping the loop
 
-				while (!key_found) {
-					// iterates through all possible key codes
-					for (int keyCode = 0; keyCode < 256; ++keyCode) {
-
-						if (GetAsyncKeyState(keyCode) & 0x8000) {
-							keyButton = static_cast<unsigned char>(keyCode);
-							key_found = true;
-							break;
-						}
-					}
-					Sleep(0.1);
-				}
+				keyButton = Keycode();
 
 				temp_str = "Button: ";
 
