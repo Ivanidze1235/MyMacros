@@ -1,6 +1,6 @@
 #pragma once
 
-std::map<unsigned char, std::string> create_keys() {
+std::map<unsigned char, std::string> create_keys() { // a function that creates a map of keys
 	std::map<unsigned char, std::string> keys;
 	
 	keys[1] = "Mouse1";

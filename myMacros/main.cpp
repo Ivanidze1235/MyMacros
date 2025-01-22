@@ -19,45 +19,50 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 #include "keycode.h"
 
  int autoclick() // does the clicking
-{
-	while (true) {
-		if (GetKeyState(keyStart) & 0x8000) { // waits for the start key to be pressed
-			
-			int sizeX = GetSystemMetrics(SM_CXSCREEN); // gets the screen dimentions
-			int sizeY = GetSystemMetrics(SM_CYSCREEN);
-			
-			int h;
-			int v;
+ {
+	 int sizeX = GetSystemMetrics(SM_CXSCREEN); // gets the screen dimentions
+	 int sizeY = GetSystemMetrics(SM_CYSCREEN);
 
-			if (Center == true)
+	 int h;
+	 int v;
+
+	 int tick;
+	 char timer[MAX_INPUT];
+
+	 while (true) {
+		if (GetKeyState(sys.keyStart) & 0x8000) { // waits for the start key to be pressed
+
+			if (sys.center)
 			{
 				h = sizeX/2;
 				v = sizeY/2;
 			}
 			else
 			{
-				char horisontal[MAX_INPUT];
+				char horisontal[MAX_INPUT]; // variable for storing horizontal screen size
 				GetWindowText(hHoriz, horisontal, MAX_INPUT);
-				char vertical[MAX_INPUT];
+				char vertical[MAX_INPUT]; // variable for storing vertical screen size
 				GetWindowText(hVert, vertical, MAX_INPUT);
 				h = atoi(horisontal);
 				v = atoi(vertical);
 			}
-
+			
+			GetWindowText(hTick, timer, MAX_INPUT);
+			tick = atoi(timer);
 			while (true) { // calls the optional functions
-				Sleep(0.01);
-				if (LMB) { mouseClick(&h, &v); }
-				if (RMB) { rightMouseClick(&h, &v); }
-				if (BPress) { buttonPress(&keyButton); }
-				if (GetKeyState(keyStop) & 0x8000) { // breaks the loop when stop keyb is pressed
+				
+				Sleep(tick);
+				if (sys.LMB) { mouseClick(&h, &v); }
+				if (sys.RMB) { rightMouseClick(&h, &v); }
+				if (sys.bPress) { buttonPress(&sys.keyButton); }
+				if (GetKeyState(sys.keyStop) & 0x8000) { // breaks the loop when stop keyb is pressed
 					return 0;
 				}
 			}
-			
+			Sleep(0);
 		}
 	}
 	return 0;
-	
 }
 
 int WINAPI WinMain(HINSTANCE currentInstance, HINSTANCE previousInstance, PSTR cmdLine, INT cmdCount) { // creates the window
@@ -94,7 +99,7 @@ int WINAPI WinMain(HINSTANCE currentInstance, HINSTANCE previousInstance, PSTR c
 LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM lparam) { // processes windows messages
 
 	BOOL checked;
-	std::map<unsigned char, std::string> keys = create_keys();
+	std::map<unsigned char, std::string> keys = create_keys(); // initialises key map
 	std::string temp_str;
 	std::string key;
 
@@ -115,11 +120,11 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 
 				if (checked) {
 					CheckDlgButton(hwnd, CENTRE_CHECKBOX, BST_UNCHECKED);
-					Center = false;
+					sys.center = false;
 				}
 				else {
 					CheckDlgButton(hwnd, CENTRE_CHECKBOX, BST_CHECKED);
-					Center = true;
+					sys.center = true;
 				}
 				break;
 
@@ -128,11 +133,11 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 
 				if (checked) {
 					CheckDlgButton(hwnd, LMB_CLICK, BST_UNCHECKED);
-					LMB = false;
+					sys.LMB = false;
 				}
 				else {
 					CheckDlgButton(hwnd, LMB_CLICK, BST_CHECKED);
-					LMB = true;
+					sys.LMB = true;
 				}
 				break;
 
@@ -141,11 +146,11 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 
 				if (checked) {
 					CheckDlgButton(hwnd, RMB_CLICK, BST_UNCHECKED);
-					RMB = false;
+					sys.RMB = false;
 				}
 				else {
 					CheckDlgButton(hwnd, RMB_CLICK, BST_CHECKED);
-					RMB = true;
+					sys.RMB = true;
 				}
 				break;
 
@@ -154,11 +159,11 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 
 				if (checked) {
 					CheckDlgButton(hwnd, KEYBOARD_PRESS, BST_UNCHECKED);
-					BPress = false;
+					sys.bPress = false;
 				}
 				else {
 					CheckDlgButton(hwnd, KEYBOARD_PRESS, BST_CHECKED);
-					BPress = true;
+					sys.bPress = true;
 				}
 				break;
 
@@ -167,21 +172,21 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 
 				if (checked) {
 					CheckDlgButton(hwnd, REP_CLICK, BST_UNCHECKED);
-					isRep = false;
+					sys.isRep = false;
 				}
 				else {
 					CheckDlgButton(hwnd, REP_CLICK, BST_CHECKED);
-					isRep = true;
+					sys.isRep = true;
 				}
 				break;
 			
 			case START_BUTTON: // triggers upon clicking the "start button" button. Sets the keybind for starting the loop
 				
-				keyStart = Keycode();
+				sys.keyStart = Keycode();
 
 				temp_str = "Start button: ";
 				try {
-					key = keys.at(keyStart);
+					key = keys.at(sys.keyStart);
 					temp_str.append(key);
 				}
 				catch(const std::out_of_range& e){ // catches trying to enter an invalid/broken character (sometimes triggers on ctrl/alt/shift for reasons unknown)
@@ -193,12 +198,12 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 
 			case STOP_BUTTON: // triggers upon clicking the "stop button" button. Sets the keybind for stopping the loop
 
-				keyStop = Keycode();
+				sys.keyStop = Keycode();
 
 				temp_str = "Stop button: ";
 
 				try {
-					key = keys.at(keyStop);
+					key = keys.at(sys.keyStop);
 					temp_str.append(key);
 				}
 				catch (const std::out_of_range& e) { // catches trying to enter an invalid/broken character (sometimes triggers on ctrl/alt/shift for reasons unknown)
@@ -210,12 +215,12 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 
 			case PRESS_BUTTON: // triggers upon clicking the "Set button" button. Sets the keybind for stopping the loop
 
-				keyButton = Keycode();
+				sys.keyButton = Keycode();
 
 				temp_str = "Button: ";
 
 				try {
-					key = keys.at(keyButton);
+					key = keys.at(sys.keyButton);
 					temp_str.append(key);
 				}
 				catch (const std::out_of_range& e) { // catches trying to enter an invalid/broken character (sometimes triggers on ctrl/alt/shift for reasons unknown)
@@ -240,5 +245,3 @@ LRESULT CALLBACK WindowProcessMessages(HWND hwnd, UINT msg, WPARAM param, LPARAM
 		
 	}
 }
-
-

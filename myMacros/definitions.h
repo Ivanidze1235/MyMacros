@@ -1,7 +1,7 @@
 #pragma once
 
 /*
-* maps the buttons
+* element mapping
 */
 #define RUN_MENU 1
 #define CENTRE_CHECKBOX 2
@@ -15,19 +15,38 @@
 
 // definitions
 #define MAX_INPUT 4096 // maximum input length
-#define WINDOW_SIZE_X 500
-#define WINDOW_SIZE_Y 500
+#define WINDOW_SIZE_X 500 // application window width
+#define WINDOW_SIZE_Y 500 // application window height
 #define MENU_GAP 30 // gap between menu options
 
-bool Center = true;
-bool LMB = false;
-bool RMB = false;
-bool BPress = false;
-bool isRep = false;
+class System{	// Class definition for various parameters
+	public:
+		bool center;
+		bool LMB;
+		bool RMB;
+		bool bPress;
+		bool isRep;
+		bool status;
 
-char keyStart = 'C';
-char keyStop = 'V';
-char keyButton = 'W';
+		char keyStart;
+		char keyStop;
+		char keyButton;
+		System(){
+			center = true;
+			LMB = false;
+			RMB = false;
+			bPress = false;
+			isRep = false;
+			status = 0;
+
+			keyStart = 'C';
+			keyStop = 'V';
+			keyButton = 'W';
+		}
+};
+
+
+System sys;
 
 HMENU hMenu;
 HWND hHoriz;

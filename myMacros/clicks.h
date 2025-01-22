@@ -11,11 +11,7 @@ void mouseClick(int* PosX, int* PosY) // left-clicks every set amount of time
 	mouseInput.mi.dwFlags = MOUSEEVENTF_LEFTUP;
 	SendInput(1, &mouseInput, sizeof(mouseInput));
 	ZeroMemory(&mouseInput, sizeof(mouseInput));
-	int tick;
-	char timer[MAX_INPUT];
-	GetWindowText(hTick, timer, MAX_INPUT);
-	tick = atoi(timer);
-	Sleep(tick);
+	
 }
 
 void rightMouseClick(int* PosX, int* PosY) // right-clicks every set amount of time
@@ -29,11 +25,7 @@ void rightMouseClick(int* PosX, int* PosY) // right-clicks every set amount of t
 	mouseInput.mi.dwFlags = MOUSEEVENTF_RIGHTUP;
 	SendInput(1, &mouseInput, sizeof(mouseInput));
 	ZeroMemory(&mouseInput, sizeof(mouseInput));
-	int tick;
-	char timer[MAX_INPUT];
-	GetWindowText(hTick, timer, MAX_INPUT);
-	tick = atoi(timer);
-	Sleep(tick);
+	
 }
 
 void buttonPress(char* letter) // presses a keyboard letter button when called
@@ -43,7 +35,7 @@ void buttonPress(char* letter) // presses a keyboard letter button when called
 	kbInput.ki.wVk = VkKeyScan(*letter);
 	SendInput(1, &kbInput, sizeof(kbInput));
 	ZeroMemory(&kbInput, sizeof(kbInput));
-	if (isRep) {
+	if (sys.isRep) {
 		kbInput.ki.wVk = VK_UP;
 		SendInput(1, &kbInput, sizeof(kbInput));
 	}
